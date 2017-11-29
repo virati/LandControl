@@ -54,10 +54,10 @@ class LandCtrl:
             self.Y = Y
             #put the absolute edges at very high potential
             wall = 2 * np.ones_like(self.Z[0,:])
-            #self.Z[1,:] = wall
-            #self.Z[-2,:] = wall
-            #self.Z[:,1] = wall
-            #self.Z[:,-2] = wall
+            self.Z[1,:] = wall
+            self.Z[-2,:] = wall
+            self.Z[:,1] = wall
+            self.Z[:,-2] = wall
             
     def plot_landscape(self):
         #surf = self.ax.plot_surface(self.X, self.Y, self.Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
@@ -68,6 +68,7 @@ class LandCtrl:
         vg = 0.01
         #print(self.sdot)
         self.ax.quiver(self.curr_state[0],self.curr_state[1],0,vg*self.sdot[0],vg*self.sdot[1],0,arrow_length_ratio=0.1)
+        self.ax.set_zlim(-1,1)
         plt.draw()
         plt.title(self.curr_state)
         plt.pause(0.0001)
@@ -130,9 +131,6 @@ class LandCtrl:
         xneigh[0] = -xneigh[0]
         yneigh[0] = -yneigh[0]
         
-        print(xneigh)
-        print(yneigh)
-    
         xgo_dir = 2*(np.argmin(xneigh) - 0.5)
         ygo_dir = 2*(np.argmin(yneigh) - 0.5)
         #so now we have a direction to go for x and y
