@@ -45,11 +45,18 @@ class LandCtrl:
             xc = self.curr_target[0]
             yc = self.curr_target[1]
             
-            xv = 0.1
-            yv = 0.1
+            xv = 1
+            yv = 1
+            
+            xobs = 0.5
+            yobs = 0.5
             
             #make the potential
-            self.Z = -0.5 * np.exp(-(X - xc)**2 / (2 * xv **2) - (Y - yc)**2 / (2 * yv ** 2))
+            self.Z = -1.5 * np.exp(-(X - xc)**2 / (2 * xv **2) - (Y - yc)**2 / (2 * yv ** 2))
+            self.Z += 0.5 * np.exp(-(X - xobs)**2 / (2 * 0.1 **2) - (Y - yobs)**2 / (2 * 0.1 ** 2))
+
+
+            
             self.X = X
             self.Y = Y
             #put the absolute edges at very high potential
@@ -65,7 +72,7 @@ class LandCtrl:
         self.ax.plot_wireframe(self.X,self.Y,self.Z,rstride=120,cstride=120)
         #self.ax.plot3d(0,0,0)
         self.ax.scatter(self.curr_state[0],self.curr_state[1],0)
-        vg = 0.01
+        vg = 0.1
         #print(self.sdot)
         self.ax.quiver(self.curr_state[0],self.curr_state[1],0,vg*self.sdot[0],vg*self.sdot[1],0,arrow_length_ratio=0.1)
         self.ax.set_zlim(-1,1)
@@ -135,9 +142,13 @@ class LandCtrl:
         ygo_dir = 2*(np.argmin(yneigh) - 0.5)
         #so now we have a direction to go for x and y
     
+        xmag = np.abs(np.min(xneigh))
+        ymag = np.abs(np.min(yneigh))
     
+        xmag = 1
+        ymag = 1
         #return a vector with the above that is unit
-        retvect = np.array([xgo_dir,ygo_dir])
+        retvect = np.array([ xgo_dir, ygo_dir])
     
         #let's find the magnitude of the potential itself
         #gfact = np.abs(10*self.Z[xidx,yidx])
@@ -147,7 +158,7 @@ class LandCtrl:
         #gfact = np.linalg.norm(retvect)
     
         gfact = 1
-        self.sdot = retvect / gfact
+        self.sdot = (xmag + ymag) * retvect / gfact
         return retvect / gfact
 
     def run(self):
@@ -171,17 +182,20 @@ class LandCtrl:
             
             print(act)
 
+            randpert = np.random.uniform(-0.01,0.01,size=actn.shape)
+
             self.curr_state += actn
+            self.curr_state += randpert
             sleep(0.001)
             self.plot_landscape()
         print('Reached Target')
 if __name__ == '__main__':
     plt.ion()
     
-    test = LandCtrl(start_state = (0.1,0.9))
+    test = LandCtrl(start_state = (0.1,0.1))
     
     #Where is the target?
-    target = np.array([0.5,0.5])
+    target = np.array([0.8,0.8])
     test.set_target(coord=target)
     
     #decide and implement the landscape potential function
