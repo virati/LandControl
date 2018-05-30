@@ -30,8 +30,8 @@ class LandCtrl:
         print('Controller Initialized')
         #dimensionality of the grid
         self.dim = 2
-        self.Xl = np.linspace(0,1,1000)
-        self.Yl = np.linspace(0,1,1000)
+        self.Xl = np.linspace(0,1,2000)
+        self.Yl = np.linspace(0,1,2000)
         
         self.curr_state = start_state
         
@@ -55,8 +55,6 @@ class LandCtrl:
             self.Z = -1.5 * np.exp(-(X - xc)**2 / (2 * xv **2) - (Y - yc)**2 / (2 * yv ** 2))
             self.Z += 0.5 * np.exp(-(X - xobs)**2 / (2 * 0.1 **2) - (Y - yobs)**2 / (2 * 0.1 ** 2))
 
-
-            
             self.X = X
             self.Y = Y
             #put the absolute edges at very high potential
@@ -70,6 +68,8 @@ class LandCtrl:
         #surf = self.ax.plot_surface(self.X, self.Y, self.Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
         plt.cla()
         self.ax.plot_wireframe(self.X,self.Y,self.Z,rstride=120,cstride=120)
+        targ_pt = self.get_target()
+        self.ax.quiver(targ_pt[0],targ_pt[1],-5,0,0,0)
         #self.ax.plot3d(0,0,0)
         self.ax.scatter(self.curr_state[0],self.curr_state[1],0)
         vg = 0.1
